@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science 5 – Week 4 | ILAW Lesson</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #1a202c; }
+  
+  #deck { position: relative; width: 100vw; height: 100vh; }
+  
+  .slide {
+    position: absolute; inset: 0; display: none; flex-direction: column;
+    padding: 2vh 2vw 9vh 2vw; 
+    background: #f7fafc; overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide-inner { width: 100%; min-height: 100%; display: flex; flex-direction: column; padding-bottom: 2vh; }
+
+  /* FLOATING TOOLBAR (Print, Read Aloud, Timer) */
+  .toolbar {
+    position: fixed; top: 1vh; right: 1vw; z-index: 999;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .toolbar button {
+    background: #2d3748; color: #fff; border: 2px solid #4a5568;
+    padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 14px;
+    cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;
+  }
+  .toolbar button:hover { background: #1a202c; border-color: #d69e2e; }
+  
+  /* TIMER STYLES */
+  .timer-container {
+    background: #2d3748; color: #fff; border: 2px solid #4a5568;
+    padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .timer-container span { font-family: monospace; font-size: 18px; }
+  .timer-container button { background: transparent; border: none; color: #f6ad55; cursor: pointer; font-size: 16px; padding: 0 5px; }
+  .timer-container button:hover { color: #ed8936; }
+
+  /* ILAW BANNER */
+  .ilaw-bar {
+    display: flex; align-items: center; gap: 1vw;
+    padding: .8vh 1.5vw; background: #2b6cb0; color: #fff;
+    border-radius: 10px; font-size: clamp(1rem, 1.6vw, 1.5rem);
+    font-weight: 700; letter-spacing: .5px; margin-bottom: 1.5vh; flex-shrink: 0;
+  }
+  .ilaw-bar .letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.5vw; height: 2.5vw; min-width: 35px; min-height: 35px;
+    background: #f6ad55; color: #1a202c; border-radius: 50%;
+    font-weight: 900; font-size: clamp(1.2rem, 2vw, 2rem);
+  }
+  .ilaw-bar .phase { color: #fbd38d; margin-left: auto; font-size: clamp(.9rem, 1.3vw, 1.1rem); }
+  .ilaw-bar.gold { background: #b7791f; }
+  .ilaw-bar.green { background: #2f855a; }
+  .ilaw-bar.purple { background: #553c9a; }
+
+  /* CONTENT AREA */
+  .content { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .content.top { justify-content: flex-start; }
+
+  /* SPLIT LAYOUT */
+  .split-layout { display: flex; gap: 2vw; width: 100%; flex: 1; min-height: 0; margin-bottom: 1.5vh; }
+  .split-text { flex: 2; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .split-image { flex: 1; display: flex; flex-direction: column; }
+
+  /* TEXT AUTOFILL */
+  h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); color: #2b6cb0; line-height: 1.1; margin-bottom: 2vh; }
+  h2 { font-size: clamp(2rem, 4vw, 3.5rem); color: #2c5282; line-height: 1.2; margin-bottom: 1.5vh; }
+  h3 { font-size: clamp(1.8rem, 3vw, 2.5rem); color: #2c5282; margin-bottom: 1vh; }
+  p, li { font-size: clamp(1.5rem, 3vw, 2.5rem); line-height: 1.4; margin-bottom: 1.5vh; font-weight: 500; }
+  
+  .center { text-align: center; }
+  .subtitle { font-size: clamp(1.2rem, 2vw, 1.8rem); color: #4a5568; margin-bottom: 2vh; }
+
+  /* CARDS & BOXES */
+  .card { background: #fff; border: 3px solid #e2e8f0; border-radius: 16px; padding: 3vh 3vw; margin-bottom: 1.5vh; width: 100%; display: flex; flex-direction: column; }
+  .card-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; color: #2b6cb0; margin-bottom: 3vh; text-align: center; line-height: 1.2; }
+  .teach-box { background: #ebf8ff; border-left: 10px solid #2b6cb0; padding: 3vh 2vw; border-radius: 12px; margin-bottom: 1.5vh; display: flex; flex-direction: column; justify-content: center; }
+  .example-box { background: #fffaf0; border-left: 10px solid #d69e2e; padding: 3vh 2vw; border-radius: 12px; margin-bottom: 1.5vh; display: flex; flex-direction: column; justify-content: center; }
+  .story-box { background: #fff; border-left: 10px solid #f6ad55; padding: 3vh 2vw; border-radius: 12px; height: 100%; max-height: 65vh; overflow-y: auto; display: flex; flex-direction: column; }
+
+  /* BUTTONS */
+  .btn { font-family: inherit; font-size: clamp(0.9rem, 1.2vw, 1.1rem); font-weight: 700; padding: 1vh 1.5vw; border: none; border-radius: 8px; cursor: pointer; margin-top: 1.5vh; background: #d69e2e; color: #fff; transition: 0.2s; align-self: flex-start; }
+  .hidden-answer { display: none; }
+  .hidden-answer.show { display: flex; flex-direction: column; justify-content: center; margin-top: 2vh; animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* PICTURE HOLDER */
+  .image-slot { border: 4px dashed #cbd5e0; background: #edf2f7; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2vh; height: 100%; min-height: 30vh; text-align: center; color: #718096; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
+  .image-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; }
+
+  /* MCQ OPTIONS */
+  .mcq-grid { display: grid; grid-template-columns: 1fr; gap: 1.5vh; width: 100%; }
+  .mcq-option { font-family: inherit; font-size: clamp(1.5rem, 2.8vw, 2.3rem); padding: 2.5vh 2vw; border: 3px solid #cbd5e0; border-radius: 12px; background: #fff; cursor: pointer; text-align: left; transition: 0.2s; font-weight: 600; color: #2d3748; line-height: 1.4; }
+  .mcq-option.correct { background: #c6f6d5; border-color: #38a169; color: #22543d; border-width: 4px; }
+  .mcq-option.wrong { background: #fed7d7; border-color: #e53e3e; color: #822727; border-width: 4px; }
+  .mcq-option[disabled] { cursor: default; }
+
+  /* MATCHING GAME */
+  .match-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; width: 100%; flex: 1; }
+  .match-col { display: flex; flex-direction: column; gap: 1.5vh; justify-content: center; }
+  .match-btn { font-family: inherit; font-size: clamp(1.4rem, 2.5vw, 2rem); padding: 2vh 2vw; border: 3px solid #cbd5e0; border-radius: 12px; background: #fff; cursor: pointer; text-align: center; font-weight: 600; transition: 0.2s; color: #2d3748; }
+  .match-btn.selected { border-color: #d69e2e; background: #fffaf0; }
+  .match-btn.matched { background: #c6f6d5; border-color: #38a169; color: #22543d; cursor: default; }
+
+  /* DRAG AND DROP */
+  .drag-container { display: flex; gap: 2vw; width: 100%; flex: 1; }
+  .drag-col { flex: 1; display: flex; flex-direction: column; gap: 1.5vh; }
+  .drag-item { padding: 2vh 1.5vw; border: 3px solid #cbd5e0; border-radius: 12px; background: #fff; font-size: clamp(1.5rem, 2.5vw, 2.2rem); font-weight: 700; text-align: center; cursor: grab; user-select: none; }
+  .drop-zone { border: 4px dashed #cbd5e0; border-radius: 12px; background: #f7fafc; min-height: 20vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: clamp(1.2rem, 2vw, 1.8rem); color: #a0aec0; font-weight: 600; transition: 0.2s; padding: 1vh; gap: 1vh; }
+
+  /* GRIDS */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; width: 100%; flex: 1; overflow: hidden; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5vw; flex: 1; }
+  .grid-card { background: #fff; border: 3px solid #e2e8f0; border-radius: 16px; padding: 3vh 2vw; display: flex; flex-direction: column; justify-content: center; height: 100%; overflow-y: auto; }
+  .grid-card h3 { text-align: center; border-bottom: 3px solid; padding-bottom: 1vh; margin-bottom: 2vh; font-size: clamp(1.8rem, 2.8vw, 2.5rem); font-weight: 800; }
+  .grid-card ul { margin-left: 2vw; }
+  .grid-card p, .grid-card li { font-size: clamp(1.3rem, 2.2vw, 1.8rem); font-weight: 600; line-height: 1.5; margin-bottom: 1.5vh; }
+
+  /* SCORE & NAV */
+  .score-display { font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; color: #2b6cb0; text-align: center; margin: 1vh 0; }
+  .nav { position: fixed; bottom: 0; left: 0; right: 0; height: 7vh; min-height: 50px; background: rgba(15,23,42,.95); display: flex; align-items: center; justify-content: space-between; padding: 0 3vw; z-index: 100; color: #e2e8f0; }
+  .nav button { font-family: inherit; font-size: clamp(1rem,1.5vw,1.3rem); font-weight: 700; padding: .8vh 2vw; border: none; border-radius: 8px; background: #2b6cb0; color: #fff; cursor: pointer; transition: 0.2s; }
+  .nav button:disabled { opacity: .3; cursor: default; }
+  .counter { font-size: clamp(1rem,1.5vw,1.3rem); font-weight: 700; letter-spacing: 1px; }
+  .progress { position: fixed; top: 0; left: 0; height: 5px; background: #d69e2e; z-index: 101; transition: width .25s; }
+
+  /* PRINT STYLES */
+  @media print {
+    .toolbar, .nav, .progress { display: none !important; }
+    .slide { position: relative; page-break-after: always; display: flex !important; height: auto; min-height: 100vh; padding: 2cm; overflow: visible; }
+    .slide-inner { min-height: auto; }
+    .story-box, .teach-box, .grid-card { max-height: none; overflow: visible; border: 1px solid #000; }
+    .image-slot { border: 1px solid #000; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<!-- FLOATING TOOLBAR -->
+<div class="toolbar no-print">
+  <!-- TIMER -->
+  <div class="timer-container">
+    ⏱️ <span id="timerDisplay">05:00</span>
+    <button onclick="toggleTimer()" id="timerBtn">▶️</button>
+    <button onclick="resetTimer()">🔄</button>
+  </div>
+  <!-- PRINT & TTS -->
+  <button onclick="window.print()" title="Print or Save as PDF">🖨️ Print</button>
+  <button onclick="readAloud()" id="ttsBtn" title="Read the slide text aloud">🔊 Read</button>
+</div>
+
+<div id="deck">
+
+<!-- ===================== COVER ===================== -->
+<section class="slide active">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">I</span><span>SCIENCE 5 · TERM 2 · WEEK 4</span></div>
+    <div class="content center">
+      <h1>Modes of Reproduction<br>in Animals</h1>
+      <p class="subtitle" style="margin-top:3vh;">A 4-Day Interactive ILAW Lesson</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LESSON OBJECTIVE ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">I</span><span>LEARNING OBJECTIVES</span></div>
+    <div class="content top" style="justify-content:flex-start; padding-top:1vh;">
+      <h2 style="margin-bottom:2vh; text-align:center;">Learning Competencies</h2>
+      <div class="grid2" style="padding-bottom:2vh;">
+        <div class="grid-card"><h3>🥚 Viviparous & Oviparous</h3><p>Differentiate animals that give birth to live young from those that lay eggs.</p></div>
+        <div class="grid-card"><h3>🐾 Animal Groups</h3><p>Classify animals into mammals, birds, and reptiles based on reproduction.</p></div>
+        <div class="grid-card"><h3>👶 Young of Animals</h3><p>Identify the young of different animals and how they are reproduced.</p></div>
+        <div class="grid-card"><h3>⚖️ Comparison</h3><p>Compare the reproductive processes of mammals, birds, and reptiles.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MOTIVATION ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">M</span><span>MOTIVATION</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Handa ka na ba? 🐣</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box" style="margin-bottom:2vh;">
+            <p><strong>Question:</strong> "Have you ever seen a baby chick hatch from an egg or a puppy being born? How are they different?"</p>
+          </div>
+          <button class="btn" onclick="toggleAnswer(this)">Show Possible Answers</button>
+          <div class="hidden-answer example-box">
+            <p><strong>Answer:</strong> Chicks hatch from eggs (Oviparous), while puppies are born alive from their mother's body (Viviparous).</p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Egg & Puppy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 1 ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Concept</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Viviparous vs. Oviparous</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p><strong>Viviparous Animals:</strong> Give birth to live young. The baby develops inside the mother's body. <em>Example: Dogs, Cats, Humans.</em></p>
+            <p style="margin-top:1.5vh;"><strong>Oviparous Animals:</strong> Lay eggs, and the baby develops outside the mother's body. <em>Example: Birds, Reptiles, Fish.</em></p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Viviparous & Oviparous</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAY 1 DRAG AND DROP -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Drag and Drop</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Drag the animal into the correct box.</div>
+        <div style="display:flex; gap:1vw; justify-content:center; margin-bottom:3vh; flex-wrap:wrap;">
+          <div class="drag-item" draggable="true" ondragstart="drag(event)" id="drag-dog" data-value="viviparous">Dog</div>
+          <div class="drag-item" draggable="true" ondragstart="drag(event)" id="drag-chicken" data-value="oviparous">Chicken</div>
+          <div class="drag-item" draggable="true" ondragstart="drag(event)" id="drag-cat" data-value="viviparous">Cat</div>
+          <div class="drag-item" draggable="true" ondragstart="drag(event)" id="drag-snake" data-value="oviparous">Snake</div>
+        </div>
+        <div class="drag-container">
+          <div class="drag-col" id="zone-viviparous" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h3 style="text-align:center; color:#2b6cb0; font-size:clamp(1.4rem, 2.5vw, 2rem); margin-bottom:1vh;">Viviparous (Live Birth)</h3>
+            <div class="drop-zone drop-area" style="min-height:25vh; background:#fff;"></div>
+          </div>
+          <div class="drag-col" id="zone-oviparous" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h3 style="text-align:center; color:#2b6cb0; font-size:clamp(1.4rem, 2.5vw, 2rem); margin-bottom:1vh;">Oviparous (Lay Eggs)</h3>
+            <div class="drop-zone drop-area" style="min-height:25vh; background:#fff;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 2 ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Advantages</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Advantages of Reproduction</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p><strong>Viviparous:</strong> The embryo gets enough nourishment inside the mother's body to survive.</p>
+            <p style="margin-top:1.5vh;"><strong>Oviparous:</strong> Animals can produce many young at once. The protective shell prevents the embryo from dying.</p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Advantages</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 3 ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Animal Groups</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Mammals, Birds, and Reptiles</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p><strong>Mammals:</strong> Give birth to live young, have hair/fur, and produce milk. <em>(Dog, Cat, Cow)</em></p>
+            <p style="margin-top:1.5vh;"><strong>Birds:</strong> Lay eggs, have feathers, wings, and beaks. <em>(Chicken, Duck, Eagle)</em></p>
+            <p style="margin-top:1.5vh;"><strong>Reptiles:</strong> Many lay eggs (some give birth), have dry scales. <em>(Snake, Turtle, Lizard)</em></p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Animal Groups</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAY 3 MATCHING TYPE -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Matching Type</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Match the animal to its correct group.</div>
+        <div class="match-container">
+          <div class="match-col">
+            <button class="match-btn" onclick="selectMatch(this, 'm1')">Dog</button>
+            <button class="match-btn" onclick="selectMatch(this, 'm2')">Chicken</button>
+            <button class="match-btn" onclick="selectMatch(this, 'm3')">Snake</button>
+          </div>
+          <div class="match-col">
+            <button class="match-btn" onclick="selectMatch(this, 'm3')">Reptile</button>
+            <button class="match-btn" onclick="selectMatch(this, 'm1')">Mammal</button>
+            <button class="match-btn" onclick="selectMatch(this, 'm2')">Bird</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 4 ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 4 · Comparison</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Comparison of Animal Groups</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p><strong>Mammals:</strong> Live birth (Viviparous)</p>
+            <p style="margin-top:1vh;"><strong>Birds:</strong> Lay eggs (Oviparous)</p>
+            <p style="margin-top:1vh;"><strong>Reptiles:</strong> Mostly lay eggs (Oviparous), but some give birth.</p>
+            <p style="margin-top:1.5vh;"><strong>Importance:</strong> Reproduction ensures that animal species continue to exist and maintain balance in nature.</p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Comparison</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- TRUE OR FALSE EXERCISES (10 ITEMS) -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 1</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">1. Viviparous animals lay eggs.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 2</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">2. Birds are oviparous animals.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 3</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">3. Dogs give birth to live young.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 4</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">4. All reptiles lay eggs.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 5</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">5. Mammals produce milk to feed their young.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 6</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">6. The young of a cat is called a puppy.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">False (It's a kitten)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 7</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">7. Amphibians and fish are oviparous.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 8</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">8. Birds have fur and produce milk.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 9</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">9. Reproduction is not important for the survival of animal species.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">True or False 10</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">10. The young of a cow is called a calf.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">True</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">False</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- SUMMATIVE TEST (10 ITEMS) -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>ASSESSING LEARNING</span><span class="phase">Summative Test</span></div>
+    <div class="content center">
+      <h1>Summative Test</h1>
+      <p class="subtitle" style="margin-top:3vh;">Science 5 · Week 4</p>
+      <p class="subtitle" style="margin-top:2vh; color:#e53e3e;">Click the correct answer. Your score will be calculated at the end.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 1 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 1</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">1. What do you call animals that give birth to live young?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Oviparous</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Viviparous</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Amphibians</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Invertebrates</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 2 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 2</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">2. Which of these animals is oviparous?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Dog</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Cow</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. Chicken</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Cat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 3 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 3</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">3. What is the young of a cat called?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. Kitten</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Puppy</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Calf</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Cub</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 4 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 4</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">4. Which animal group has feathers and lays eggs?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Mammals</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Birds</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Reptiles</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Amphibians</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 5 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 5</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">5. Which of these animals is a mammal?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Snake</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Eagle</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. Dolphin</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Turtle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 6 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 6</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">6. Which statement is TRUE about reptiles?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. All reptiles give birth to live young.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Most reptiles lay eggs, but some give birth to live young.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Reptiles produce milk for their young.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Reptiles have feathers.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 7 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 7</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">7. What is an advantage of oviparous animals?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. The mother carries the baby inside her body.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. They can produce many young at once, and the shell protects the embryo.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. The baby drinks milk from the mother.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. They have fur and hair.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 8 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 8</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">8. Why is reproduction important for animals?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. To make them look beautiful.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. To ensure that their species continue to exist and maintain balance in nature.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. To provide food for humans.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. To make them stronger.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 9 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 9</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">9. What is the young of a cow called?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Foal</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Kid</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. Calf</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Cub</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 10 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 10</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">10. Which of the following is an oviparous animal?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Goat</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Lion</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. Duck</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Elephant</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- SCORE & WAYS FORWARD -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">W</span><span>WAYS FORWARD</span><span class="phase">· Final Result</span></div>
+    <div class="content center">
+      <h2>Your Score</h2>
+      <div class="score-display" id="final-score">0/10</div>
+      
+      <div id="ways-forward-msg" class="card" style="margin-top:2vh; display:none; background:#f0fff4; border-color:#38a169;">
+        <!-- Dynamic Message injects here -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- EXIT TICKET (GENERALIZATION) -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">G</span><span>GENERALIZATION</span><span class="phase">· Exit Ticket</span></div>
+    <div class="content top" style="justify-content:flex-start; padding-top:2vh; overflow-y:auto;">
+      <h2 style="text-align:center; margin-bottom:2vh;">Exit Ticket</h2>
+      <div class="card" style="background:#f0fff4; border-color:#38a169; align-items:flex-start; text-align:left; flex:none;">
+        <p style="font-size:clamp(1.5rem, 2.5vw, 2.2rem); line-height:1.5; color:#22543d; margin-bottom:2vh;">
+          🎯 <strong>You learned today that...</strong>
+        </p>
+        <ul style="margin-left:2vw; font-size:clamp(1.2rem, 2vw, 1.6rem); color:#22543d; line-height:1.8;">
+          <li><strong>Viviparous animals</strong> give birth to live young (dogs, cats, cows).</li>
+          <li><strong>Oviparous animals</strong> lay eggs (birds, reptiles, fish).</li>
+          <li><strong>Mammals</strong> give birth and produce milk.</li>
+          <li><strong>Birds</strong> have feathers and lay eggs.</li>
+          <li><strong>Reptiles</strong> mostly lay eggs, but some give birth.</li>
+          <li><strong>Reproduction</strong> ensures the survival of animal species.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">W</span><span>WAYS FORWARD</span><span class="phase">· Closing</span></div>
+    <div class="content center">
+      <h1>Maraming Salamat!</h1>
+      <p class="subtitle" style="margin-top:3vh;">Science 5 · Term 2 · Week 4</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<div class="nav no-print">
+  <button id="prevBtn" onclick="prevSlide()">← Prev</button>
+  <span class="counter" id="counter">1 / 1</span>
+  <button id="nextBtn" onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+/* ===================== SLIDE NAVIGATION ===================== */
+const slides = Array.from(document.querySelectorAll('.slide'));
+let current = 0;
+const total = slides.length;
+
+function render() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').disabled = current === total - 1;
+  document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  slides[current].scrollTop = 0;
+  
+  // Stop reading when changing slides
+  window.speechSynthesis.cancel(); 
+  document.getElementById('ttsBtn').textContent = '🔊 Read';
+
+  setTimeout(autoFitText, 50);
+
+  if (current === total - 3) {
+    generateWaysForward();
+  }
+}
+function nextSlide() { if (current < total - 1) { current++; render(); } }
+function prevSlide() { if (current > 0) { current--; render(); } }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+});
+render();
+
+/* ===================== AUTO-FIT TEXT SCRIPT ===================== */
+function autoFitText() {
+  const textBoxes = document.querySelectorAll('.teach-box, .example-box');
+  textBoxes.forEach(box => {
+    let fontSize = 40; 
+    box.style.fontSize = fontSize + 'px';
+    while ((box.scrollHeight > box.clientHeight || box.scrollWidth > box.clientWidth) && fontSize > 14) {
+      fontSize--;
+      box.style.fontSize = fontSize + 'px';
+    }
+  });
+}
+
+/* ===================== TEXT TO SPEECH ===================== */
+function readAloud() {
+  const btn = document.getElementById('ttsBtn');
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    btn.textContent = '🔊 Read';
+    return;
+  }
+  const activeSlide = slides[current];
+  const textToRead = activeSlide.innerText.replace(/[^\w\s.,?!-]/g, ''); 
+  if (textToRead.trim().length === 0) return;
+
+  const utterance = new SpeechSynthesisUtterance(textToRead);
+  utterance.lang = 'en-US'; // For English subjects
+  utterance.rate = 0.9; // Medyo mabagal para sa Slow Readers
+  
+  utterance.onstart = () => { btn.textContent = '⏹️ Stop'; };
+  utterance.onend = () => { btn.textContent = '🔊 Read'; };
+  utterance.onerror = () => { btn.textContent = '🔊 Read'; };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+/* ===================== FLOATING TIMER LOGIC ===================== */
+let timeLeft = 300; // 5 minutes default
+let timerInterval = null;
+let isRunning = false;
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  document.getElementById('timerDisplay').textContent = 
+    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('timerBtn');
+  if (isRunning) {
+    clearInterval(timerInterval);
+    btn.textContent = '▶️';
+    isRunning = false;
+  } else {
+    if (timeLeft <= 0) timeLeft = 300; // reset if 0
+    btn.textContent = '⏸️';
+    isRunning = true;
+    timerInterval = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateTimerDisplay();
+      } else {
+        clearInterval(timerInterval);
+        btn.textContent = '▶️';
+        isRunning = false;
+        alert("Time's up! ⏰");
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 300; // Reset to 5 minutes
+  isRunning = false;
+  document.getElementById('timerBtn').textContent = '▶️';
+  updateTimerDisplay();
+}
+
+/* ===================== TOGGLE SHOW ANSWER ===================== */
+function toggleAnswer(btn) {
+  const card = btn.closest('.split-text') || btn.closest('.card');
+  const answerBox = card.querySelector('.hidden-answer');
+  if (answerBox.classList.contains('show')) {
+    answerBox.classList.remove('show');
+    btn.textContent = 'Show Possible Answers';
+  } else {
+    answerBox.classList.add('show');
+    btn.textContent = 'Hide Possible Answers';
+  }
+}
+
+/* ===================== DRAG AND DROP LOGIC ===================== */
+function allowDrop(ev) {
+  ev.preventDefault();
+  ev.currentTarget.querySelector('.drop-area').style.borderColor = '#2b6cb0';
+  ev.currentTarget.querySelector('.drop-area').style.background = '#ebf8ff';
+}
+function dragLeave(ev) {
+  ev.currentTarget.querySelector('.drop-area').style.borderColor = '#cbd5e0';
+  ev.currentTarget.querySelector('.drop-area').style.background = '#fff';
+}
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+function drop(ev) {
+  ev.preventDefault();
+  const zone = ev.currentTarget;
+  const dropArea = zone.querySelector('.drop-area');
+  dropArea.style.borderColor = '#cbd5e0';
+  dropArea.style.background = '#fff';
+  
+  const data = ev.dataTransfer.getData("text");
+  const draggedElement = document.getElementById(data);
+  
+  const newItem = document.createElement('div');
+  newItem.textContent = draggedElement.textContent;
+  newItem.style.padding = '1.5vh 1vw';
+  newItem.style.background = '#c6f6d5';
+  newItem.style.borderRadius = '8px';
+  newItem.style.fontSize = 'clamp(1.2rem, 2vw, 1.8rem)';
+  newItem.style.fontWeight = '700';
+  newItem.style.textAlign = 'center';
+  newItem.style.border = '2px solid #38a169';
+  newItem.style.width = '100%';
+  
+  const isViviparous = draggedElement.getAttribute('data-value') === 'viviparous';
+  const isInViviparousZone = zone.id === 'zone-viviparous';
+  
+  if ((isViviparous && isInViviparousZone) || (!isViviparous && !isInViviparousZone)) {
+    dropArea.appendChild(newItem);
+    draggedElement.style.display = 'none';
+  } else {
+    newItem.style.background = '#fed7d7';
+    newItem.style.borderColor = '#e53e3e';
+    dropArea.appendChild(newItem);
+    setTimeout(() => { newItem.remove(); }, 1000);
+  }
+}
+
+/* ===================== MATCHING LOGIC ===================== */
+let selectedMatch = null;
+function selectMatch(btn, matchId) {
+  if (btn.classList.contains('matched')) return;
+  if (!selectedMatch) {
+    document.querySelectorAll('.match-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedMatch = { btn, matchId };
+  } else {
+    if (selectedMatch.btn === btn) {
+      btn.classList.remove('selected');
+      selectedMatch = null;
+      return;
+    }
+    if (selectedMatch.matchId === matchId) {
+      selectedMatch.btn.classList.remove('selected');
+      selectedMatch.btn.classList.add('matched');
+      btn.classList.add('matched');
+      selectedMatch = null;
+    } else {
+      selectedMatch.btn.classList.remove('selected');
+      selectedMatch = null;
+      btn.style.borderColor = '#e53e3e';
+      btn.style.background = '#fed7d7';
+      setTimeout(() => {
+        btn.style.borderColor = '#cbd5e0';
+        btn.style.background = '#fff';
+      }, 500);
+    }
+  }
+}
+
+/* ===================== MCQ & SCORING LOGIC ===================== */
+let score = 0;
+const totalQuestions = 10;
+
+function checkMCQ(btn, isCorrect) {
+  const grid = btn.closest('.mcq-grid');
+  const options = grid.querySelectorAll('.mcq-option');
+  options.forEach(opt => opt.disabled = true);
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    if (btn.closest('.slide').querySelector('.ilaw-bar.green')) {
+      score++;
+    }
+  } else {
+    btn.classList.add('wrong');
+    options.forEach(opt => {
+      if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+  
+  const scoreEl = document.getElementById('final-score');
+  if(scoreEl) scoreEl.textContent = score + '/' + totalQuestions;
+}
+
+/* ===================== WAYS FORWARD MESSAGE ===================== */
+function generateWaysForward() {
+  const msgBox = document.getElementById('ways-forward-msg');
+  if(!msgBox) return;
+  msgBox.style.display = 'block';
+  
+  let title = "";
+  let message = "";
+  let color = "";
+  const passingScore = 8;
+
+  if (score >= passingScore) {
+    title = "🎉 Congratulations!";
+    message = "You are now ready for the next lesson! You have shown a strong understanding of animal reproduction.";
+    color = "#38a169"; 
+  } else {
+    title = "📖 Let's Study Again";
+    message = "Don't worry! Let's go back to Day 1–4 and review the differences between viviparous and oviparous animals.";
+    color = "#e53e3e"; 
+  }
+
+  msgBox.innerHTML = `
+    <h2 style="color: ${color}; text-align: center; margin-bottom: 2vh; font-size: clamp(2rem, 4vw, 3rem);">${title}</h2>
+    <p style="font-size: clamp(1.4rem, 2.5vw, 2.2rem); text-align: center; font-weight: 600; line-height: 1.4;">${message}</p>
+  `;
+}
+
+/* ===================== IMAGE UPLOAD ===================== */
+function loadImage(event, container) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      let img = container.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        container.appendChild(img);
+      }
+      img.src = e.target.result;
+      const span = container.querySelector('span');
+      if (span) span.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+function dropImage(event, container) {
+  event.preventDefault();
+  const file = event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      let img = container.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        container.appendChild(img);
+      }
+      img.src = e.target.result;
+      const span = container.querySelector('span');
+      if (span) span.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+</script>
+</body>
+</html>

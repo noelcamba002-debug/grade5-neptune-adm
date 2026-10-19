@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 5 – Neptune | Alternative Delivery Mode (ADM)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  header {
+    background: #1e293b;
+    padding: 3vh 5vw;
+    text-align: center;
+    border-bottom: 4px solid #d69e2e;
+  }
+  header h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #f6ad55;
+    margin-bottom: 1vh;
+  }
+  header p {
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    color: #94a3b8;
+  }
+  header .school {
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    color: #64748b;
+    margin-top: 1vh;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* MAIN GRID */
+  main {
+    flex: 1;
+    padding: 5vh 5vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .intro {
+    text-align: center;
+    margin-bottom: 4vh;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    color: #cbd5e0;
+    line-height: 1.6;
+  }
+  .intro strong { color: #f6ad55; }
+
+  /* SUBJECT CARDS */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2vw;
+  }
+  .subject-card {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 16px;
+    padding: 3vh 2vw;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .subject-card:hover {
+    transform: translateY(-8px);
+    border-color: #d69e2e;
+    box-shadow: 0 12px 30px rgba(214, 158, 46, 0.2);
+  }
+  .subject-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: #d69e2e;
+  }
+  .subject-card .icon {
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    margin-bottom: 1.5vh;
+  }
+  .subject-card h2 {
+    font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+    color: #f6ad55;
+    margin-bottom: 0.8vh;
+  }
+  .subject-card .sub {
+    font-size: clamp(0.85rem, 1.4vw, 1rem);
+    color: #94a3b8;
+    margin-bottom: 1.5vh;
+  }
+  .subject-card .button {
+    margin-top: auto;
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    font-weight: 700;
+    color: #e2e8f0;
+    background: #334155;
+    padding: 1.2vh 1.5vw;
+    border-radius: 8px;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .subject-card:hover .button { background: #d69e2e; color: #0f172a; }
+
+  /* FOOTER */
+  footer {
+    background: #1e293b;
+    padding: 3vh 5vw;
+    text-align: center;
+    color: #64748b;
+    font-size: clamp(0.8rem, 1.3vw, 1rem);
+    line-height: 1.6;
+    border-top: 2px solid #334155;
+  }
+  footer strong { color: #cbd5e0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    main { padding: 3vh 4vw; }
+    .grid { gap: 3vh; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="school">Republic of the Philippines · Department of Education</div>
+  <div class="school">Region II – Cagayan Valley · Division of Isabela · San Mariano I District</div>
+  <div class="school">Angela Elementary School · School ID: 155514</div>
+  <h1>Grade 5 – Neptune</h1>
+  <p>Alternative Delivery Mode (ADM) · Term 2, Week 4</p>
+</header>
+
+<main>
+  <div class="intro">
+    Welcome, learners! 👋 <br>
+    Choose the subject you want to study. Each lesson is interactive and self-paced. Use the <strong>arrow keys</strong> to navigate the slides, and click the <strong>🔊 Read</strong> button if you need the text read aloud.
+  </div>
+
+  <div class="grid">
+
+    <a class="subject-card" href="Science5_Week4_Final.html">
+      <div class="icon">🔬</div>
+      <h2>Science 5</h2>
+      <div class="sub">Modes of Reproduction in Animals</div>
+      <div class="button">Start Lesson →</div>
+    </a>
+
+    <a class="subject-card" href="Math5_Week4_Final.html">
+      <div class="icon">🔢</div>
+      <h2>Mathematics 5</h2>
+      <div class="sub">Divisibility Rules &amp; Common Factors</div>
+      <div class="button">Start Lesson →</div>
+    </a>
+
+    <a class="subject-card" href="English5_Week4_Final15.html">
+      <div class="icon">📖</div>
+      <h2>English 5</h2>
+      <div class="sub">Drawing Conclusions, Grammar &amp; Visual Elements</div>
+      <div class="button">Start Lesson →</div>
+    </a>
+
+    <a class="subject-card" href="Filipino5_Week4_Final.html">
+      <div class="icon">🎭</div>
+      <h2>Filipino 5</h2>
+      <div class="sub">Dulang Pambata at Pokus ng Pandiwa</div>
+      <div class="button">Start Lesson →</div>
+    </a>
+
+    <a class="subject-card" href="AP5_Week4_Final.html">
+      <div class="icon">🏛️</div>
+      <h2>Araling Panlipunan 5</h2>
+      <div class="sub">Monopolyo, Royal Company at Polo y Servicio</div>
+      <div class="button">Start Lesson →</div>
+    </a>
+
+    <a class="subject-card" href="EPP5_Week4_Final.html">
+      <div class="icon">🧵</div>
+      <h2>EPP 5</h2>
+      <div class="sub">Sewing Machine, Pot Holder &amp; Multimedia</div>
+      <div class="button">Start Lesson →</div>
+    </a>
+
+    <a class="subject-card" href="MAPEH5_Week4_Final.html">
+      <div class="icon">🎵</div>
+      <h2>MAPEH 5</h2>
+      <div class="sub">Salidumay, Banga Dance &amp; Gateway Drugs</div>
+      <div class="button">Start Lesson →</div>
+    </a>
+
+    <a class="subject-card" href="GMRC5_Week4_Final.html">
+      <div class="icon">❤️</div>
+      <h2>GMRC 5</h2>
+      <div class="sub">Papel at Pananagutan sa Pamilya</div>
+      <div class="button">Start Lesson →</div>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  <strong>Prepared by:</strong> NOEL D. CAMBA · Master Teacher 1 <br>
+  <strong>Noted:</strong> RONELYN M. PRODIGO · School Head <br><br>
+  Version 1.0 · October 2026 · School Year 2026–2027
+</footer>
+
+</body>
+</html>

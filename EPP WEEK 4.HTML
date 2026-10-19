@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPP 5 – Ikaapat na Linggo | ILAW Lesson</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #1a202c; }
+  
+  #deck { position: relative; width: 100vw; height: 100vh; }
+  
+  .slide {
+    position: absolute; inset: 0; display: none; flex-direction: column;
+    padding: 2vh 2vw 9vh 2vw; 
+    background: #f7fafc; overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide-inner { width: 100%; min-height: 100%; display: flex; flex-direction: column; padding-bottom: 2vh; }
+
+  /* FLOATING TOOLBAR (Print, Read Aloud, Timer) */
+  .toolbar {
+    position: fixed; top: 1vh; right: 1vw; z-index: 999;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .toolbar button {
+    background: #2d3748; color: #fff; border: 2px solid #4a5568;
+    padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 14px;
+    cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;
+  }
+  .toolbar button:hover { background: #1a202c; border-color: #d69e2e; }
+  
+  /* TIMER STYLES */
+  .timer-container {
+    background: #2d3748; color: #fff; border: 2px solid #4a5568;
+    padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .timer-container span { font-family: monospace; font-size: 18px; }
+  .timer-container button { background: transparent; border: none; color: #f6ad55; cursor: pointer; font-size: 16px; padding: 0 5px; }
+  .timer-container button:hover { color: #ed8936; }
+
+  /* ILAW BANNER */
+  .ilaw-bar {
+    display: flex; align-items: center; gap: 1vw;
+    padding: .8vh 1.5vw; background: #2b6cb0; color: #fff;
+    border-radius: 10px; font-size: clamp(1rem, 1.6vw, 1.5rem);
+    font-weight: 700; letter-spacing: .5px; margin-bottom: 1.5vh; flex-shrink: 0;
+  }
+  .ilaw-bar .letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.5vw; height: 2.5vw; min-width: 35px; min-height: 35px;
+    background: #f6ad55; color: #1a202c; border-radius: 50%;
+    font-weight: 900; font-size: clamp(1.2rem, 2vw, 2rem);
+  }
+  .ilaw-bar .phase { color: #fbd38d; margin-left: auto; font-size: clamp(.9rem, 1.3vw, 1.1rem); }
+  .ilaw-bar.gold { background: #b7791f; }
+  .ilaw-bar.green { background: #2f855a; }
+  .ilaw-bar.purple { background: #553c9a; }
+
+  /* CONTENT AREA */
+  .content { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .content.top { justify-content: flex-start; }
+
+  /* SPLIT LAYOUT */
+  .split-layout { display: flex; gap: 2vw; width: 100%; flex: 1; min-height: 0; margin-bottom: 1.5vh; }
+  .split-text { flex: 2; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .split-image { flex: 1; display: flex; flex-direction: column; }
+
+  /* TEXT AUTOFILL */
+  h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); color: #2b6cb0; line-height: 1.1; margin-bottom: 2vh; }
+  h2 { font-size: clamp(2rem, 4vw, 3.5rem); color: #2c5282; line-height: 1.2; margin-bottom: 1.5vh; }
+  h3 { font-size: clamp(1.8rem, 3vw, 2.5rem); color: #2c5282; margin-bottom: 1vh; }
+  p, li { font-size: clamp(1.5rem, 3vw, 2.5rem); line-height: 1.4; margin-bottom: 1.5vh; font-weight: 500; }
+  
+  .center { text-align: center; }
+  .subtitle { font-size: clamp(1.2rem, 2vw, 1.8rem); color: #4a5568; margin-bottom: 2vh; }
+
+  /* CARDS & BOXES */
+  .card { background: #fff; border: 3px solid #e2e8f0; border-radius: 16px; padding: 3vh 3vw; margin-bottom: 1.5vh; width: 100%; display: flex; flex-direction: column; }
+  .card-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; color: #2b6cb0; margin-bottom: 3vh; text-align: center; line-height: 1.2; }
+  .teach-box { background: #ebf8ff; border-left: 10px solid #2b6cb0; padding: 3vh 2vw; border-radius: 12px; margin-bottom: 1.5vh; display: flex; flex-direction: column; justify-content: center; }
+  .example-box { background: #fffaf0; border-left: 10px solid #d69e2e; padding: 3vh 2vw; border-radius: 12px; margin-bottom: 1.5vh; display: flex; flex-direction: column; justify-content: center; }
+  .story-box { background: #fff; border-left: 10px solid #f6ad55; padding: 3vh 2vw; border-radius: 12px; height: 100%; max-height: 65vh; overflow-y: auto; display: flex; flex-direction: column; }
+  
+  .story-box p { font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.6; margin-bottom: 2vh; font-weight: 500; }
+  .story-box p:last-child { margin-bottom: 0; }
+
+  /* BUTTONS */
+  .btn { font-family: inherit; font-size: clamp(0.9rem, 1.2vw, 1.1rem); font-weight: 700; padding: 1vh 1.5vw; border: none; border-radius: 8px; cursor: pointer; margin-top: 1.5vh; background: #d69e2e; color: #fff; transition: 0.2s; align-self: flex-start; }
+  .hidden-answer { display: none; }
+  .hidden-answer.show { display: flex; flex-direction: column; justify-content: center; margin-top: 2vh; animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* PICTURE HOLDER */
+  .image-slot { border: 4px dashed #cbd5e0; background: #edf2f7; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2vh; height: 100%; min-height: 30vh; text-align: center; color: #718096; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
+  .image-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; }
+
+  /* MCQ OPTIONS */
+  .mcq-grid { display: grid; grid-template-columns: 1fr; gap: 1.5vh; width: 100%; }
+  .mcq-option { font-family: inherit; font-size: clamp(1.5rem, 2.8vw, 2.3rem); padding: 2.5vh 2vw; border: 3px solid #cbd5e0; border-radius: 12px; background: #fff; cursor: pointer; text-align: left; transition: 0.2s; font-weight: 600; color: #2d3748; line-height: 1.4; }
+  .mcq-option.correct { background: #c6f6d5; border-color: #38a169; color: #22543d; border-width: 4px; }
+  .mcq-option.wrong { background: #fed7d7; border-color: #e53e3e; color: #822727; border-width: 4px; }
+  .mcq-option[disabled] { cursor: default; }
+
+  /* MATCHING GAME */
+  .match-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; width: 100%; flex: 1; }
+  .match-col { display: flex; flex-direction: column; gap: 1.5vh; justify-content: center; }
+  .match-btn { font-family: inherit; font-size: clamp(1.4rem, 2.5vw, 2rem); padding: 2vh 2vw; border: 3px solid #cbd5e0; border-radius: 12px; background: #fff; cursor: pointer; text-align: center; font-weight: 600; transition: 0.2s; color: #2d3748; }
+  .match-btn.selected { border-color: #d69e2e; background: #fffaf0; }
+  .match-btn.matched { background: #c6f6d5; border-color: #38a169; color: #22543d; cursor: default; }
+
+  /* DRAG AND DROP */
+  .drag-container { display: flex; gap: 2vw; width: 100%; flex: 1; }
+  .drag-col { flex: 1; display: flex; flex-direction: column; gap: 1.5vh; }
+  .drag-item { padding: 2vh 1.5vw; border: 3px solid #cbd5e0; border-radius: 12px; background: #fff; font-size: clamp(1.5rem, 2.5vw, 2.2rem); font-weight: 700; text-align: center; cursor: grab; user-select: none; }
+  .drop-zone { border: 4px dashed #cbd5e0; border-radius: 12px; background: #f7fafc; min-height: 20vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: clamp(1.2rem, 2vw, 1.8rem); color: #a0aec0; font-weight: 600; transition: 0.2s; padding: 1vh; gap: 1vh; }
+
+  /* GRIDS */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; width: 100%; flex: 1; overflow: hidden; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5vw; flex: 1; }
+  .grid-card { background: #fff; border: 3px solid #e2e8f0; border-radius: 16px; padding: 3vh 2vw; display: flex; flex-direction: column; justify-content: center; height: 100%; overflow-y: auto; }
+  .grid-card h3 { text-align: center; border-bottom: 3px solid; padding-bottom: 1vh; margin-bottom: 2vh; font-size: clamp(1.8rem, 2.8vw, 2.5rem); font-weight: 800; }
+  .grid-card ul { margin-left: 2vw; }
+  .grid-card p, .grid-card li { font-size: clamp(1.3rem, 2.2vw, 1.8rem); font-weight: 600; line-height: 1.5; margin-bottom: 1.5vh; }
+
+  /* SCORE & NAV */
+  .score-display { font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; color: #2b6cb0; text-align: center; margin: 1vh 0; }
+  .nav { position: fixed; bottom: 0; left: 0; right: 0; height: 7vh; min-height: 50px; background: rgba(15,23,42,.95); display: flex; align-items: center; justify-content: space-between; padding: 0 3vw; z-index: 100; color: #e2e8f0; }
+  .nav button { font-family: inherit; font-size: clamp(1rem,1.5vw,1.3rem); font-weight: 700; padding: .8vh 2vw; border: none; border-radius: 8px; background: #2b6cb0; color: #fff; cursor: pointer; transition: 0.2s; }
+  .nav button:disabled { opacity: .3; cursor: default; }
+  .counter { font-size: clamp(1rem,1.5vw,1.3rem); font-weight: 700; letter-spacing: 1px; }
+  .progress { position: fixed; top: 0; left: 0; height: 5px; background: #d69e2e; z-index: 101; transition: width .25s; }
+
+  /* PRINT STYLES */
+  @media print {
+    .toolbar, .nav, .progress { display: none !important; }
+    .slide { position: relative; page-break-after: always; display: flex !important; height: auto; min-height: 100vh; padding: 2cm; overflow: visible; }
+    .slide-inner { min-height: auto; }
+    .story-box, .teach-box, .grid-card { max-height: none; overflow: visible; border: 1px solid #000; }
+    .image-slot { border: 1px solid #000; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<!-- FLOATING TOOLBAR -->
+<div class="toolbar no-print">
+  <div class="timer-container">
+    ⏱️ <span id="timerDisplay">05:00</span>
+    <button onclick="toggleTimer()" id="timerBtn">▶️</button>
+    <button onclick="resetTimer()">🔄</button>
+  </div>
+  <button onclick="window.print()" title="Print or Save as PDF">🖨️ Print</button>
+  <button onclick="readAloud()" id="ttsBtn" title="Read the slide text aloud">🔊 Read</button>
+</div>
+
+<div id="deck">
+
+<!-- ===================== COVER ===================== -->
+<section class="slide active">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">I</span><span>EPP 5 · IKALAWANG TERMINO · IKAAPAT NA LINGGO</span></div>
+    <div class="content center">
+      <h1>Mga Makina, Materyales<br>at Multimedia</h1>
+      <p class="subtitle" style="margin-top:3vh;">Isang 4-Araw na ILAW Lesson Plan</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LESSON OBJECTIVE ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">I</span><span>MGA LAYUNIN</span></div>
+    <div class="content top" style="justify-content:flex-start; padding-top:1vh;">
+      <h2 style="margin-bottom:2vh; text-align:center;">Learning Competencies</h2>
+      <div class="grid2" style="padding-bottom:2vh;">
+        <div class="grid-card"><h3>🧵 Bahagi ng Makina</h3><p>Makilala ang mga bahagi ng makinang panahi at ang gamit nito.</p></div>
+        <div class="grid-card"><h3>🛠️ Materyales</h3><p>Matukoy ang mga materyales at hakbang sa pagbuo ng pot holder.</p></div>
+        <div class="grid-card"><h3>🖥️ Multimedia</h3><p>Makilala ang mga elemento ng multimedia presentation (text, graphics, photos).</p></div>
+        <div class="grid-card"><h3>✨ Transitions</h3><p>Magamit ang transition effects sa paggawa ng slide presentation.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MOTIVATION ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">M</span><span>MOTIVATION</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Handa ka na ba? 🧵</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box" style="margin-bottom:2vh;">
+            <p><strong>Tanong:</strong> "Kung ikaw ay magtatahi ng punit na damit, anong kagamitan ang una mong hahanapin sa bahay?"</p>
+          </div>
+          <button class="btn" onclick="toggleAnswer(this)">Show Possible Answers</button>
+          <div class="hidden-answer example-box">
+            <p><strong>Mga posibleng sagot:</strong> Karayom at sinulid / Makinang panahi / Piraso ng tela</p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Sewing Image</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 1 (SEWING MACHINE PARTS) ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Bahagi ng Makina</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Mga Bahagi ng Makinang Panahi</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p>Ang makinang panahi ay may iba't ibang bahagi:</p>
+            <ul style="margin-left: 2vw; margin-top: 1.5vh;">
+              <li><strong>Spool Pin:</strong> Hawak ang rolyo ng sinulid sa itaas.</li>
+              <li><strong>Karayom (Needle):</strong> Ang matulis na bahagi na nagtatahi.</li>
+              <li><strong>Presser Foot:</strong> Pumipindot sa tela habang tinatahi.</li>
+              <li><strong>Feed Dog:</strong> Ngipin sa ilalim na naghihila sa tela pasulong.</li>
+              <li><strong>Bobbin:</strong> Hawak ang sinulid sa ilalim.</li>
+              <li><strong>Pedal:</strong> Ginagamit ng paa upang umandar.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Sewing Machine</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Exercise</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">1. Aling bahagi ng makina ang nagtatahi ng tela?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Pedal</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Karayom (Needle)</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Bobbin</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Flywheel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 2 (MATERYALES AT POT HOLDER) ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Materials</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Mga Materyales sa Paggawa ng Pot Holder</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p>Upang makagawa ng pot holder, kailangan natin ang mga sumusunod:</p>
+            <ul style="margin-left: 2vw; margin-top: 1.5vh;">
+              <li><strong>Retasong tela:</strong> Dalawang piraso (parehong laki).</li>
+              <li><strong>Karayom at sinulid:</strong> Pangkabit ng tela.</li>
+              <li><strong>Gunting:</strong> Panggupit sa tela.</li>
+              <li><strong>Pins o aspili:</strong> Pang-ipit habang tinatahi.</li>
+              <li><strong>Makinang panahi:</strong> Kung mayroon.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Materials</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Procedures</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Mga Hakbang sa Paggawa ng Pot Holder</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <ol style="margin-left: 2vw; font-size: clamp(1.3rem, 2.3vw, 1.9rem);">
+              <li><strong>Pagputol:</strong> Gupitin ang tela sa parisukat (halimbawa: 6x6 pulgada). Gumawa ng dalawang piraso.</li>
+              <li><strong>Paghahanda:</strong> Ipatong ang dalawang piraso ng tela na magkabaliktad ang mukha. I-ipit gamit ang pins.</li>
+              <li><strong>Pananahi:</strong> Tahiin ang gilid, mag-iwan ng maliit na butas para maisalikod ang tela.</li>
+              <li><strong>Pagbaliktad:</strong> Baliktarin ang tela sa pamamagitan ng butas.</li>
+              <li><strong>Paggawa ng Loop:</strong> Gumawa ng maliit na tusok sa gilid para gawing sabitan (loop).</li>
+              <li><strong>Pagtahi sa huli:</strong> Tahiin ang butas at lagyan ng dekorasyon kung nais.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Procedures</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 3 (MULTIMEDIA) ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Multimedia</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Mga Elemento ng Multimedia Presentation</h2>
+      <div class="teach-box" style="margin-bottom:1.5vh;">
+        <p>Ang isang multimedia presentation ay may tatlong pangunahing elemento:</p>
+      </div>
+      <div class="grid3">
+        <div class="grid-card"><h3>📝 Text</h3><p>Ginagamit upang magbigay ng impormasyon o paliwanag.</p></div>
+        <div class="grid-card"><h3>🎨 Graphics</h3><p>Mga disenyo o visual elements na nagpapaganda ng slide.</p></div>
+        <div class="grid-card"><h3>📸 Photos</h3><p>Mga larawan na nagbibigay ng karagdagang detalye at nagpapalinaw ng mensahe.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 4 (TRANSITIONS) ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 4 · Transitions</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Paggamit ng Transition Effects</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p>Ang <strong>Transition</strong> ay ang epektong ginagamit kapag lumilipat mula sa isang slide patungo sa susunod na slide. Nakakatulong ito upang maging mas malikhain at kapana-panabik ang iyong presentation.</p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Transition Effects</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- SUMMATIVE TEST (10 ITEMS) -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>ASSESSING LEARNING</span><span class="phase">Summative Test</span></div>
+    <div class="content center">
+      <h1>Pagsusulit</h1>
+      <p class="subtitle" style="margin-top:3vh;">EPP 5 · Ikaapat na Linggo</p>
+      <p class="subtitle" style="margin-top:2vh; color:#e53e3e;">Piliin ang tamang sagot. Makikita ang iskor sa dulo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 1 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 1</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">1. Aling bahagi ng makina ang nagtatahi ng tela?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Pedal</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Karayom</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Bobbin</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Flywheel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 2 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 2</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">2. Anong bahagi ang naghihila sa tela pasulong?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Spool Pin</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Feed Dog</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Tension Disc</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Presser Foot</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 3 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 3</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">3. Anong materyales ang ginagamit sa paggawa ng pot holder?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Plastic</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Kahoy</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. Retasong tela</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Yero</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 4 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 4</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">4. Ano ang unang hakbang sa paggawa ng pot holder?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. Pagputol ng tela.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Pagtahi sa huling gilid.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Paggawa ng sabitan.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Paglalagay ng dekorasyon.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 5 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 5</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">5. Alin ang HINDI elemento ng multimedia presentation?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Text</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Photos</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Graphics</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">D. Amoy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 6 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 6</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">6. Ano ang gamit ng "Photos" sa presentation?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Upang gawing mabigat ang file.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Upang magbigay ng karagdagang detalye at linaw.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Upang palitan ang lahat ng salita.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Upang gawing madilim ang slide.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 7 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 7</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">7. Ano ang tawag sa epektong ginagamit kapag lumilipat sa susunod na slide?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Animation</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Transition</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Design</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Layout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 8 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 8</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">8. Ano ang pamagat ng proyektong presentation na gagawin mo?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Ang Aking Pamilya</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Ang Aking Paaralan</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. Ang Aking Pangarap</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Ang Aking Kaibigan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 9 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 9</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">9. Aling bahagi ng makina ang may hawak ng sinulid sa ilalim?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. Bobbin</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Karayom</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Pedal</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Tela</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ITEM 10 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 10</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">10. Ano ang pangunahing layunin ng "Ang Aking Pangarap" na proyekto?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Upang maglaro sa computer.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Upang makabuo ng malikhaing multimedia presentation.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Upang mag-print ng papel.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Upang magbasa ng libro.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- SCORE & WAYS FORWARD -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">W</span><span>WAYS FORWARD</span><span class="phase">· Final Result</span></div>
+    <div class="content center">
+      <h2>Iyong Iskor</h2>
+      <div class="score-display" id="final-score">0/10</div>
+      
+      <div id="ways-forward-msg" class="card" style="margin-top:2vh; display:none; background:#f0fff4; border-color:#38a169;">
+        <!-- Dynamic Message injects here -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- EXIT TICKET (GENERALIZATION) -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">G</span><span>GENERALIZATION</span><span class="phase">· Exit Ticket</span></div>
+    <div class="content top" style="justify-content:flex-start; padding-top:2vh; overflow-y:auto;">
+      <h2 style="text-align:center; margin-bottom:2vh;">Exit Ticket</h2>
+      <div class="card" style="background:#f0fff4; border-color:#38a169; align-items:flex-start; text-align:left; flex:none;">
+        <p style="font-size:clamp(1.5rem, 2.5vw, 2.2rem); line-height:1.5; color:#22543d; margin-bottom:2vh;">
+          🎯 <strong>Natutunan mo ngayong linggo na...</strong>
+        </p>
+        <ul style="margin-left:2vw; font-size:clamp(1.2rem, 2vw, 1.6rem); color:#22543d; line-height:1.8;">
+          <li>Ang mga <strong>bahagi ng makinang panahi</strong> tulad ng spool pin, feed dog, karayom, at bobbin.</li>
+          <li>Ang mga <strong>hakbang at materyales</strong> sa paggawa ng pot holder mula sa retasong tela.</li>
+          <li>Ang tatlong elemento ng <strong>multimedia presentation</strong>: text, graphics, at photos.</li>
+          <li>Ang paggamit ng <strong>transition effects</strong> sa paggawa ng slide.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">W</span><span>WAYS FORWARD</span><span class="phase">· Closing</span></div>
+    <div class="content center">
+      <h1>Maraming Salamat!</h1>
+      <p class="subtitle" style="margin-top:3vh;">EPP 5 · Ikalawang Termino · Ikaapat na Linggo</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<div class="nav no-print">
+  <button id="prevBtn" onclick="prevSlide()">← Prev</button>
+  <span class="counter" id="counter">1 / 1</span>
+  <button id="nextBtn" onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+/* ===================== SLIDE NAVIGATION ===================== */
+const slides = Array.from(document.querySelectorAll('.slide'));
+let current = 0;
+const total = slides.length;
+
+function render() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').disabled = current === total - 1;
+  document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  slides[current].scrollTop = 0;
+  
+  window.speechSynthesis.cancel(); 
+  document.getElementById('ttsBtn').textContent = '🔊 Read';
+
+  setTimeout(autoFitText, 50);
+
+  if (current === total - 3) {
+    generateWaysForward();
+  }
+}
+function nextSlide() { if (current < total - 1) { current++; render(); } }
+function prevSlide() { if (current > 0) { current--; render(); } }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+});
+render();
+
+/* ===================== AUTO-FIT TEXT SCRIPT ===================== */
+function autoFitText() {
+  const textBoxes = document.querySelectorAll('.teach-box, .example-box');
+  textBoxes.forEach(box => {
+    let fontSize = 40; 
+    box.style.fontSize = fontSize + 'px';
+    while ((box.scrollHeight > box.clientHeight || box.scrollWidth > box.clientWidth) && fontSize > 14) {
+      fontSize--;
+      box.style.fontSize = fontSize + 'px';
+    }
+  });
+}
+
+/* ===================== TEXT TO SPEECH ===================== */
+function readAloud() {
+  const btn = document.getElementById('ttsBtn');
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    btn.textContent = '🔊 Read';
+    return;
+  }
+  const activeSlide = slides[current];
+  const textToRead = activeSlide.innerText.replace(/[^\w\s.,?!-]/g, ''); 
+  if (textToRead.trim().length === 0) return;
+
+  const utterance = new SpeechSynthesisUtterance(textToRead);
+  utterance.lang = 'tl-PH'; // TAGALOG
+  utterance.rate = 0.9; 
+  
+  utterance.onstart = () => { btn.textContent = '⏹️ Stop'; };
+  utterance.onend = () => { btn.textContent = '🔊 Read'; };
+  utterance.onerror = () => { btn.textContent = '🔊 Read'; };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+/* ===================== FLOATING TIMER LOGIC ===================== */
+let timeLeft = 300;
+let timerInterval = null;
+let isRunning = false;
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  document.getElementById('timerDisplay').textContent = 
+    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('timerBtn');
+  if (isRunning) {
+    clearInterval(timerInterval);
+    btn.textContent = '▶️';
+    isRunning = false;
+  } else {
+    if (timeLeft <= 0) timeLeft = 300;
+    btn.textContent = '⏸️';
+    isRunning = true;
+    timerInterval = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateTimerDisplay();
+      } else {
+        clearInterval(timerInterval);
+        btn.textContent = '▶️';
+        isRunning = false;
+        alert("Time's up! ⏰");
+      }
+    }, 1000);
+  }
+}
+function resetTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 300;
+  isRunning = false;
+  document.getElementById('timerBtn').textContent = '▶️';
+  updateTimerDisplay();
+}
+
+/* ===================== TOGGLE SHOW ANSWER ===================== */
+function toggleAnswer(btn) {
+  const card = btn.closest('.split-text') || btn.closest('.card');
+  const answerBox = card.querySelector('.hidden-answer');
+  if (answerBox.classList.contains('show')) {
+    answerBox.classList.remove('show');
+    btn.textContent = 'Show Possible Answers';
+  } else {
+    answerBox.classList.add('show');
+    btn.textContent = 'Hide Possible Answers';
+  }
+}
+
+/* ===================== MCQ & SCORING LOGIC ===================== */
+let score = 0;
+const totalQuestions = 10;
+
+function checkMCQ(btn, isCorrect) {
+  const grid = btn.closest('.mcq-grid');
+  const options = grid.querySelectorAll('.mcq-option');
+  options.forEach(opt => opt.disabled = true);
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    if (btn.closest('.slide').querySelector('.ilaw-bar.green')) {
+      score++;
+    }
+  } else {
+    btn.classList.add('wrong');
+    options.forEach(opt => {
+      if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+  
+  const scoreEl = document.getElementById('final-score');
+  if(scoreEl) scoreEl.textContent = score + '/' + totalQuestions;
+}
+
+/* ===================== WAYS FORWARD MESSAGE ===================== */
+function generateWaysForward() {
+  const msgBox = document.getElementById('ways-forward-msg');
+  if(!msgBox) return;
+  msgBox.style.display = 'block';
+  
+  let title = "";
+  let message = "";
+  let color = "";
+  const passingScore = 8;
+
+  if (score >= passingScore) {
+    title = "🎉 Binabati kita!";
+    message = "Handa ka na sa susunod na aralin! Napakagaling mong sumagot sa pagsusulit.";
+    color = "#38a169"; 
+  } else {
+    title = "📖 Mag-aral muli tayo";
+    message = "Huwag mag-alala! Balikan natin ang mga aralin sa Day 1-4 at pag-usapan ang mga bahagi ng makina at multimedia presentation.";
+    color = "#e53e3e"; 
+  }
+
+  msgBox.innerHTML = `
+    <h2 style="color: ${color}; text-align: center; margin-bottom: 2vh; font-size: clamp(2rem, 4vw, 3rem);">${title}</h2>
+    <p style="font-size: clamp(1.4rem, 2.5vw, 2.2rem); text-align: center; font-weight: 600; line-height: 1.4;">${message}</p>
+  `;
+}
+
+/* ===================== IMAGE UPLOAD ===================== */
+function loadImage(event, container) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      let img = container.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        container.appendChild(img);
+      }
+      img.src = e.target.result;
+      const span = container.querySelector('span');
+      if (span) span.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+function dropImage(event, container) {
+  event.preventDefault();
+  const file = event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      let img = container.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        container.appendChild(img);
+      }
+      img.src = e.target.result;
+      const span = container.querySelector('span');
+      if (span) span.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+</script>
+</body>
+</html>

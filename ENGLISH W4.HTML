@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English 5 – Week 4 | Complete ILAW Lesson</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #1a202c; }
+  
+  #deck { position: relative; width: 100vw; height: 100vh; }
+  
+  .slide {
+    position: absolute; inset: 0; display: none; flex-direction: column;
+    padding: 2vh 2vw 9vh 2vw; 
+    background: #f7fafc; overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide-inner { width: 100%; min-height: 100%; display: flex; flex-direction: column; padding-bottom: 2vh; }
+
+  /* FLOATING TOOLBAR */
+  .toolbar {
+    position: fixed; top: 1vh; right: 1vw; z-index: 999;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .toolbar button {
+    background: #2d3748; color: #fff; border: 2px solid #4a5568;
+    padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 14px;
+    cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;
+  }
+  .toolbar button:hover { background: #1a202c; border-color: #d69e2e; }
+  
+  /* TIMER */
+  .timer-container {
+    background: #2d3748; color: #fff; border: 2px solid #4a5568;
+    padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .timer-container span { font-family: monospace; font-size: 18px; }
+  .timer-container button { background: transparent; border: none; color: #f6ad55; cursor: pointer; font-size: 16px; padding: 0 5px; }
+
+  /* ILAW BANNER */
+  .ilaw-bar {
+    display: flex; align-items: center; gap: 1vw;
+    padding: .8vh 1.5vw; background: #2b6cb0; color: #fff;
+    border-radius: 10px; font-size: clamp(1rem, 1.6vw, 1.5rem);
+    font-weight: 700; letter-spacing: .5px; margin-bottom: 1.5vh; flex-shrink: 0;
+  }
+  .ilaw-bar .letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.5vw; height: 2.5vw; min-width: 35px; min-height: 35px;
+    background: #f6ad55; color: #1a202c; border-radius: 50%;
+    font-weight: 900; font-size: clamp(1.2rem, 2vw, 2rem);
+  }
+  .ilaw-bar .phase { color: #fbd38d; margin-left: auto; font-size: clamp(.9rem, 1.3vw, 1.1rem); }
+  .ilaw-bar.gold { background: #b7791f; }
+  .ilaw-bar.green { background: #2f855a; }
+  .ilaw-bar.purple { background: #553c9a; }
+
+  /* CONTENT AREA */
+  .content { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .content.top { justify-content: flex-start; }
+
+  /* SPLIT LAYOUT */
+  .split-layout { display: flex; gap: 2vw; width: 100%; flex: 1; min-height: 0; margin-bottom: 1.5vh; }
+  .split-text { flex: 2; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .split-image { flex: 1; display: flex; flex-direction: column; }
+
+  /* TEXT AUTOFILL */
+  h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); color: #2b6cb0; line-height: 1.1; margin-bottom: 2vh; }
+  h2 { font-size: clamp(2rem, 4vw, 3.5rem); color: #2c5282; line-height: 1.2; margin-bottom: 1.5vh; }
+  h3 { font-size: clamp(1.8rem, 3vw, 2.5rem); color: #2c5282; margin-bottom: 1vh; }
+  p, li { font-size: clamp(1.5rem, 3vw, 2.5rem); line-height: 1.4; margin-bottom: 1.5vh; font-weight: 500; }
+  
+  .center { text-align: center; }
+  .subtitle { font-size: clamp(1.2rem, 2vw, 1.8rem); color: #4a5568; margin-bottom: 2vh; }
+
+  /* CARDS & BOXES */
+  .card { background: #fff; border: 3px solid #e2e8f0; border-radius: 16px; padding: 3vh 3vw; margin-bottom: 1.5vh; width: 100%; display: flex; flex-direction: column; }
+  .card-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; color: #2b6cb0; margin-bottom: 3vh; text-align: center; line-height: 1.2; }
+  .teach-box { background: #ebf8ff; border-left: 10px solid #2b6cb0; padding: 3vh 2vw; border-radius: 12px; margin-bottom: 1.5vh; display: flex; flex-direction: column; justify-content: center; }
+  .example-box { background: #fffaf0; border-left: 10px solid #d69e2e; padding: 3vh 2vw; border-radius: 12px; margin-bottom: 1.5vh; display: flex; flex-direction: column; justify-content: center; }
+  .story-box { background: #fff; border-left: 10px solid #f6ad55; padding: 3vh 2vw; border-radius: 12px; height: 100%; max-height: 65vh; overflow-y: auto; display: flex; flex-direction: column; }
+  
+  .story-box p { font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.6; margin-bottom: 2vh; font-weight: 500; }
+  .story-box p:last-child { margin-bottom: 0; }
+
+  /* BUTTONS */
+  .btn { font-family: inherit; font-size: clamp(0.9rem, 1.2vw, 1.1rem); font-weight: 700; padding: 1vh 1.5vw; border: none; border-radius: 8px; cursor: pointer; margin-top: 1.5vh; background: #d69e2e; color: #fff; transition: 0.2s; align-self: flex-start; }
+  .hidden-answer { display: none; }
+  .hidden-answer.show { display: flex; flex-direction: column; justify-content: center; margin-top: 2vh; animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* PICTURE HOLDER */
+  .image-slot { border: 4px dashed #cbd5e0; background: #edf2f7; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2vh; height: 100%; min-height: 30vh; text-align: center; color: #718096; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
+  .image-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; }
+
+  /* MCQ OPTIONS */
+  .mcq-grid { display: grid; grid-template-columns: 1fr; gap: 1.5vh; width: 100%; }
+  .mcq-option { font-family: inherit; font-size: clamp(1.5rem, 2.8vw, 2.3rem); padding: 2.5vh 2vw; border: 3px solid #cbd5e0; border-radius: 12px; background: #fff; cursor: pointer; text-align: left; transition: 0.2s; font-weight: 600; color: #2d3748; line-height: 1.4; }
+  .mcq-option.correct { background: #c6f6d5; border-color: #38a169; color: #22543d; border-width: 4px; }
+  .mcq-option.wrong { background: #fed7d7; border-color: #e53e3e; color: #822727; border-width: 4px; }
+  .mcq-option[disabled] { cursor: default; }
+
+  /* MATCHING GAME */
+  .match-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; width: 100%; flex: 1; }
+  .match-col { display: flex; flex-direction: column; gap: 1.5vh; justify-content: center; }
+  .match-btn { font-family: inherit; font-size: clamp(1.4rem, 2.5vw, 2rem); padding: 2vh 2vw; border: 3px solid #cbd5e0; border-radius: 12px; background: #fff; cursor: pointer; text-align: center; font-weight: 600; transition: 0.2s; color: #2d3748; }
+  .match-btn.selected { border-color: #d69e2e; background: #fffaf0; }
+  .match-btn.matched { background: #c6f6d5; border-color: #38a169; color: #22543d; cursor: default; }
+
+  /* GRIDS */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; width: 100%; flex: 1; overflow: hidden; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5vw; flex: 1; }
+  .grid-card { background: #fff; border: 3px solid #e2e8f0; border-radius: 16px; padding: 3vh 2vw; display: flex; flex-direction: column; justify-content: center; height: 100%; overflow-y: auto; }
+  .grid-card h3 { text-align: center; border-bottom: 3px solid; padding-bottom: 1vh; margin-bottom: 2vh; font-size: clamp(1.8rem, 2.8vw, 2.5rem); font-weight: 800; }
+  .grid-card ul { margin-left: 2vw; }
+  .grid-card p, .grid-card li { font-size: clamp(1.3rem, 2.2vw, 1.8rem); font-weight: 600; line-height: 1.5; margin-bottom: 1.5vh; }
+
+  /* SCORE & NAV */
+  .score-display { font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; color: #2b6cb0; text-align: center; margin: 1vh 0; }
+  .nav { position: fixed; bottom: 0; left: 0; right: 0; height: 7vh; min-height: 50px; background: rgba(15,23,42,.95); display: flex; align-items: center; justify-content: space-between; padding: 0 3vw; z-index: 100; color: #e2e8f0; }
+  .nav button { font-family: inherit; font-size: clamp(1rem,1.5vw,1.3rem); font-weight: 700; padding: .8vh 2vw; border: none; border-radius: 8px; background: #2b6cb0; color: #fff; cursor: pointer; transition: 0.2s; }
+  .nav button:disabled { opacity: .3; cursor: default; }
+  .counter { font-size: clamp(1rem,1.5vw,1.3rem); font-weight: 700; letter-spacing: 1px; }
+  .progress { position: fixed; top: 0; left: 0; height: 5px; background: #d69e2e; z-index: 101; transition: width .25s; }
+
+  /* PRINT STYLES */
+  @media print {
+    .toolbar, .nav, .progress { display: none !important; }
+    .slide { position: relative; page-break-after: always; display: flex !important; height: auto; min-height: 100vh; padding: 2cm; overflow: visible; }
+    .slide-inner { min-height: auto; }
+    .story-box, .teach-box, .grid-card { max-height: none; overflow: visible; border: 1px solid #000; }
+    .image-slot { border: 1px solid #000; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<!-- FLOATING TOOLBAR -->
+<div class="toolbar no-print">
+  <div class="timer-container">
+    ⏱️ <span id="timerDisplay">05:00</span>
+    <button onclick="toggleTimer()" id="timerBtn">▶️</button>
+    <button onclick="resetTimer()">🔄</button>
+  </div>
+  <button onclick="window.print()" title="Print or Save as PDF">🖨️ Print</button>
+  <button onclick="readAloud()" id="ttsBtn" title="Read the slide text aloud">🔊 Read</button>
+</div>
+
+<div id="deck">
+
+<!-- ===================== COVER ===================== -->
+<section class="slide active">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">I</span><span>ENGLISH 5 · TERM 2 · WEEK 4</span></div>
+    <div class="content center">
+      <h1>Reading Skills, Grammar<br>&amp; Visual Elements</h1>
+      <p class="subtitle" style="margin-top:3vh;">A 4-Day Interactive ILAW Lesson</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LESSON OBJECTIVE ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">I</span><span>LEARNING OBJECTIVES</span></div>
+    <div class="content top" style="justify-content:flex-start; padding-top:1vh;">
+      <h2 style="margin-bottom:2vh; text-align:center;">Learning Competencies</h2>
+      <div class="grid2" style="padding-bottom:2vh;">
+        <div class="grid-card"><h3>📖 Drawing Conclusions</h3><p>Use text clues and prior knowledge to make logical judgments about characters and events.</p></div>
+        <div class="grid-card"><h3>✍️ Possessive Nouns</h3><p>Use singular and plural possessive nouns correctly, applying apostrophe rules.</p></div>
+        <div class="grid-card"><h3>🧩 Compound Nouns</h3><p>Form and classify compound nouns as closed, open, or hyphenated.</p></div>
+        <div class="grid-card"><h3>🖼️ Visual Elements</h3><p>Interpret pictures, symbols, colors, text features, and layout to understand meaning.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MOTIVATION ===================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar"><span class="letter">M</span><span>MOTIVATION</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Detective Warm-Up 🔍</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box" style="margin-bottom:2vh;">
+            <p><strong>Teacher says:</strong> "Imagine you walk into a room and see wet footprints on the floor and an open umbrella by the door. What can you conclude happened?"</p>
+          </div>
+          <button class="btn" onclick="toggleAnswer(this)">Show Possible Answers</button>
+          <div class="hidden-answer example-box">
+            <p><strong>Possible answers:</strong> Someone came in from the rain. / It rained recently.</p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Detective Picture</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- DAY 1 EXERCISES: DRAWING CONCLUSIONS -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice A (1)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Mia carried an umbrella before leaving the house. Dark clouds covered the sky, and strong winds began to blow.</div>
+        <p style="text-align:center; font-size:1.4rem; margin-bottom:2vh;">What is the conclusion?</p>
+        <button class="btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="hidden-answer example-box">
+          <p><strong>Conclusion:</strong> It may rain soon.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice A (2)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Jared studied every night for the Science test. When the results were released, he smiled and showed his paper to his parents.</div>
+        <p style="text-align:center; font-size:1.4rem; margin-bottom:2vh;">What is the conclusion?</p>
+        <button class="btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="hidden-answer example-box">
+          <p><strong>Conclusion:</strong> Jared did well on the test.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice A (3)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Liza watered the plants every morning and removed the weeds around them. After a few weeks, the plants produced many flowers.</div>
+        <p style="text-align:center; font-size:1.4rem; margin-bottom:2vh;">What is the conclusion?</p>
+        <button class="btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="hidden-answer example-box">
+          <p><strong>Conclusion:</strong> Liza took good care of her plants.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice A (4)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">The children cleaned the classroom, arranged the chairs, and decorated the bulletin board before the visitors arrived.</div>
+        <p style="text-align:center; font-size:1.4rem; margin-bottom:2vh;">What is the conclusion?</p>
+        <button class="btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="hidden-answer example-box">
+          <p><strong>Conclusion:</strong> The children were preparing for visitors.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice A (5)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Ben put on his jacket, scarf, and gloves before going outside.</div>
+        <p style="text-align:center; font-size:1.4rem; margin-bottom:2vh;">What is the conclusion?</p>
+        <button class="btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="hidden-answer example-box">
+          <p><strong>Conclusion:</strong> The weather outside is cold.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAY 1 MULTIPLE CHOICE -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice B (1)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Ana was carrying a large box and was breathing heavily.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Ana is sleeping.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Ana is tired from carrying something heavy.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Ana is watching television.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Ana is cooking dinner.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice B (2)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">The streets were wet, and people were carrying umbrellas.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. It is very hot.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. It has been raining.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. There is a parade.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. People are exercising.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice B (3)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Mark practiced basketball every afternoon and attended extra training sessions.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Mark dislikes sports.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Mark wants to improve his basketball skills.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Mark is afraid of basketball.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Mark never exercises.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice B (4)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">The dog barked loudly when someone knocked on the gate.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. The dog noticed a visitor.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. The dog was sleeping.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. The dog was swimming.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. The dog was eating.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice B (5)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Sarah brought books, notebooks, and pencils to school.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. Sarah is preparing for class.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Sarah is going to the market.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Sarah is attending a party.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Sarah is going camping.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Practice B (6)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">When Carlo woke up, he looked outside and saw puddles on the road. The leaves were still wet, and the sky was cloudy.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. It snowed during the night.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. It rained recently.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. It was very sunny.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. It was windy all day.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAY 1 ENRICHMENT -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 1 · Enrichment</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Read the situation and write your own conclusion.</div>
+        <p style="font-size:clamp(1.4rem, 2.5vw, 2rem); line-height:1.6; margin-bottom:2vh;"><strong>Situation:</strong> The family packed clothes, food, umbrellas, and cameras into their vehicle early in the morning.</p>
+        <div style="margin-bottom:2vh;">
+          <label style="font-size:clamp(1.2rem, 2vw, 1.6rem); font-weight:700; color:#2c5282;">My Conclusion:</label>
+          <textarea class="fib-input" style="min-width:100%; min-height:10vh; border:2px solid #cbd5e0; border-radius:8px; padding:1vh; font-size:1.2rem;" placeholder="Type your conclusion here..."></textarea>
+        </div>
+        <button class="btn" onclick="toggleAnswer(this)">Show Sample Answer</button>
+        <div class="hidden-answer example-box">
+          <p><strong>Sample Conclusion:</strong> The family is going on a trip or vacation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- DAY 2 EXERCISES: POSSESSIVE NOUNS -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Concept</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Possessive Nouns</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p><strong>Singular Possessive (ONE):</strong> Add <strong>'s</strong>. <em>teacher → teacher's</em></p>
+            <p style="margin-top:1.5vh;"><strong>Plural Possessive (MORE THAN ONE):</strong></p>
+            <ul style="margin-left: 2vw;">
+              <li>If it ends in <strong>s</strong>, add only <strong>'</strong>. <em>(students → students')</em></li>
+              <li>If it does NOT end in <strong>s</strong>, add <strong>'s</strong>. <em>(children → children's)</em></li>
+            </ul>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Possessive Nouns</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Day 2: Objective 1 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Objective 1</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Write SP if Singular Possessive and PP if Plural Possessive: <strong>teacher's book</strong></div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. SP</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. PP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Objective 1</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Write SP if Singular Possessive and PP if Plural Possessive: <strong>students' projects</strong></div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. SP</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. PP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Objective 1</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Write SP if Singular Possessive and PP if Plural Possessive: <strong>children's clothes</strong></div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. SP</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. PP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Objective 1</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Write SP if Singular Possessive and PP if Plural Possessive: <strong>parents' room</strong></div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. SP</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. PP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Objective 1</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Write SP if Singular Possessive and PP if Plural Possessive: <strong>players' uniforms</strong></div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. SP</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. PP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Day 2: Objective 2 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Objective 2</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Rewrite using a possessive noun: <br><br> "the toy of the baby"</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. the babies toy</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. the baby's toy</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. the babys toy</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. the babies' toy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Objective 2</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Rewrite using a possessive noun: <br><br> "the books of the teachers"</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. the teachers' books</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. the teacher's books</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. the teachers books</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. the teachers's books</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 2 · Objective 2</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Rewrite using a possessive noun: <br><br> "the bicycles of the boys"</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. the boy's bicycles</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. the boys' bicycles</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. the boys bicycles</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. the boys's bicycles</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- DAY 3 EXERCISES: COMPOUND NOUNS -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Concept</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">The Three Types of Compound Nouns</h2>
+      <div class="grid3" style="margin-top:2vh;">
+        <div class="grid-card"><h3>1. Closed</h3><p>Written as ONE word.</p><p style="margin-top:1vh;"><strong>Examples:</strong> <em>playground, bedroom</em></p></div>
+        <div class="grid-card"><h3>2. Open</h3><p>Written as TWO separate words.</p><p style="margin-top:1vh;"><strong>Examples:</strong> <em>school bus, birthday cake</em></p></div>
+        <div class="grid-card"><h3>3. Hyphenated</h3><p>Joined by a HYPHEN (-).</p><p style="margin-top:1vh;"><strong>Examples:</strong> <em>mother-in-law, well-being</em></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Day 3: Objective 2 (Form) -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Form (1)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Combine the words to form a compound noun: <br><br> book + shelf = ?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. bookshelf</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. book shelf</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. book-shelf</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Form (2)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Combine the words to form a compound noun: <br><br> rain + coat = ?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. raincoat</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. rain coat</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. rain-coat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Day 3: Objective 3 (Classify) -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Classify (1)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Classify the compound noun: <br><br> <strong>playground</strong></div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. Closed</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Open</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Hyphenated</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Classify (2)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Classify the compound noun: <br><br> <strong>school bus</strong></div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Closed</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Open</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Hyphenated</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 3 · Classify (3)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">Classify the compound noun: <br><br> <strong>mother-in-law</strong></div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Closed</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Open</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. Hyphenated</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- DAY 4 EXERCISES: VISUAL ELEMENTS -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 4 · Concept</span></div>
+    <div class="content">
+      <h2 style="text-align:center;">Visual Elements &amp; Meaning</h2>
+      <div class="split-layout">
+        <div class="split-text">
+          <div class="teach-box">
+            <p><strong>Visual elements include pictures, symbols, colors, text features, and layout.</strong> They work together to send a message.</p>
+          </div>
+        </div>
+        <div class="split-image">
+          <div class="image-slot" onclick="this.querySelector('input').click()" ondrop="dropImage(event, this)" ondragover="event.preventDefault()">
+            <input type="file" accept="image/*" style="display:none" onchange="loadImage(event, this.parentElement)">
+            <span>📷 Click or Drop<br>Visual Elements</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Day 4: Objective 1 -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 4 · Identify (1)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">These are images used to show people, places, animals, or objects.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. Pictures</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Colors</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Symbols</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Layout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 4 · Identify (2)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">These help attract attention and create feelings or moods.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Pictures</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Colors</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Symbols</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Shapes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Day 4: Objective 3 (Analysis) -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar gold"><span class="letter">L</span><span>LEARNING EXPERIENCES</span><span class="phase">Day 4 · Analyze (1)</span></div>
+    <div class="content top">
+      <div class="card">
+        <div class="card-title">A poster shows children throwing garbage into trash bins. The poster uses bright colors and has a large title that says, "Keep Our Community Clean." <br><br> What is the message of the poster?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Throw garbage anywhere.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Keep the community clean.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Buy more trash bins.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Children should not play outside.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- SUMMATIVE TEST (15 ITEMS) -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>ASSESSING LEARNING</span><span class="phase">Summative Test</span></div>
+    <div class="content center">
+      <h1>Summative Test</h1>
+      <p class="subtitle" style="margin-top:3vh;">English 5 · Week 4</p>
+      <p class="subtitle" style="margin-top:2vh; color:#e53e3e;">15 Items. Click the correct answer. Your score will be calculated at the end.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DRAWING CONCLUSIONS (1-5) -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 1</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">1. Mia carried an umbrella before leaving the house. Dark clouds covered the sky, and strong winds began to blow. What is the conclusion?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. It will be sunny.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. It may rain soon.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. It is very hot.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. It is snowing.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 2</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">2. Jared studied every night for the Science test. When the results were released, he smiled and showed his paper to his parents. What is the conclusion?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. Jared failed the test.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. Jared did well on the test.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Jared was absent.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Jared forgot his paper.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 3</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">3. The streets were wet, and people were carrying umbrellas. What can you conclude?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. It is very hot.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. It has been raining.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. There is a parade.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. People are exercising.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 4</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">4. Sarah brought books, notebooks, and pencils to school. What can you conclude?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. Sarah is preparing for class.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Sarah is going to the market.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Sarah is attending a party.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Sarah is going camping.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 5</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">5. Ben put on his jacket, scarf, and gloves before going outside. What can you conclude?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. The weather outside is cold.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. The weather outside is hot.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. It is raining heavily.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. It is summer time.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POSSESSIVE NOUNS (6-10) -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 6</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">6. Which is a singular possessive noun?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. teachers'</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. boys'</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. mother's</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. students'</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 7</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">7. Which is a plural possessive noun?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. girl's</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. baby's</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. father's</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">D. players'</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 8</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">8. The toys belong to the children.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. childrens toys</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. children's toys</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. childrens' toys</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. childrens's toys</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 9</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">9. The room belongs to the parents.</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. parent's room</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. parents room</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. parents' room</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. parent room</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 10</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">10. Which sentence uses a possessive noun correctly?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. The dogs bone is buried.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. The dog's bone is buried.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. The dog's' bone is buried.</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. The dog bone's is buried.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPOUND & VISUAL (11-15) -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 11</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">11. Which is a closed compound noun?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. school bus</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. playground</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. dining room</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. mother-in-law</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 12</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">12. Which is an open compound noun?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. notebook</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. sunflower</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">C. post office</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. football</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 13</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">13. Which is a hyphenated compound noun?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. bedroom</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. classroom</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. football</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">D. brother-in-law</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 14</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">14. Which visual element usually attracts attention first?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, true)">A. Title or picture</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">B. Footer</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. Page number</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. Reference</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar green"><span class="letter">A</span><span>SUMMATIVE TEST</span><span class="phase">· Item 15</span></div>
+    <div class="content">
+      <div class="card">
+        <div class="card-title">15. Why are colors used in posters?</div>
+        <div class="mcq-grid">
+          <button class="mcq-option" onclick="checkMCQ(this, false)">A. To make the poster heavier</button>
+          <button class="mcq-option" onclick="checkMCQ(this, true)">B. To attract attention and communicate ideas</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">C. To hide information</button>
+          <button class="mcq-option" onclick="checkMCQ(this, false)">D. To confuse readers</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- SCORE & WAYS FORWARD -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">W</span><span>WAYS FORWARD</span><span class="phase">· Final Result</span></div>
+    <div class="content center">
+      <h2>Your Score</h2>
+      <div class="score-display" id="final-score">0/15</div>
+      
+      <div id="ways-forward-msg" class="card" style="margin-top:2vh; display:none; background:#f0fff4; border-color:#38a169;">
+        <!-- Dynamic Message injects here -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== -->
+<!-- EXIT TICKET (GENERALIZATION) -->
+<!-- ================================================== -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">G</span><span>GENERALIZATION</span><span class="phase">· Exit Ticket</span></div>
+    <div class="content top" style="justify-content:flex-start; padding-top:2vh; overflow-y:auto;">
+      <h2 style="text-align:center; margin-bottom:2vh;">Exit Ticket</h2>
+      <div class="card" style="background:#f0fff4; border-color:#38a169; align-items:flex-start; text-align:left; flex:none;">
+        <p style="font-size:clamp(1.5rem, 2.5vw, 2.2rem); line-height:1.5; color:#22543d; margin-bottom:2vh;">
+          🎯 <strong>You learned today that...</strong>
+        </p>
+        <ul style="margin-left:2vw; font-size:clamp(1.2rem, 2vw, 1.6rem); color:#22543d; line-height:1.8;">
+          <li>Readers <strong>draw conclusions</strong> by combining text clues with what they already know.</li>
+          <li><strong>Singular possessive nouns</strong> add <strong>'s</strong>, while <strong>plural possessive nouns</strong> ending in s add only an apostrophe (<strong>'</strong>).</li>
+          <li><strong>Compound nouns</strong> can be closed (playground), open (school bus), or hyphenated (mother-in-law).</li>
+          <li><strong>Visual elements</strong> like colors and layout help send a message before you even read the words.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-inner">
+    <div class="ilaw-bar purple"><span class="letter">W</span><span>WAYS FORWARD</span><span class="phase">· Closing</span></div>
+    <div class="content center">
+      <h1>Maraming Salamat!</h1>
+      <p class="subtitle" style="margin-top:3vh;">English 5 · Term 2 · Week 4</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<div class="nav no-print">
+  <button id="prevBtn" onclick="prevSlide()">← Prev</button>
+  <span class="counter" id="counter">1 / 1</span>
+  <button id="nextBtn" onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+/* ===================== SLIDE NAVIGATION ===================== */
+const slides = Array.from(document.querySelectorAll('.slide'));
+let current = 0;
+const total = slides.length;
+
+function render() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').disabled = current === total - 1;
+  document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  slides[current].scrollTop = 0;
+  
+  window.speechSynthesis.cancel(); 
+  document.getElementById('ttsBtn').textContent = '🔊 Read';
+
+  setTimeout(autoFitText, 50);
+
+  if (current === total - 3) {
+    generateWaysForward();
+  }
+}
+function nextSlide() { if (current < total - 1) { current++; render(); } }
+function prevSlide() { if (current > 0) { current--; render(); } }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+});
+render();
+
+/* ===================== AUTO-FIT TEXT SCRIPT ===================== */
+function autoFitText() {
+  const textBoxes = document.querySelectorAll('.teach-box, .example-box');
+  textBoxes.forEach(box => {
+    let fontSize = 40; 
+    box.style.fontSize = fontSize + 'px';
+    while ((box.scrollHeight > box.clientHeight || box.scrollWidth > box.clientWidth) && fontSize > 14) {
+      fontSize--;
+      box.style.fontSize = fontSize + 'px';
+    }
+  });
+}
+
+/* ===================== TEXT TO SPEECH ===================== */
+function readAloud() {
+  const btn = document.getElementById('ttsBtn');
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    btn.textContent = '🔊 Read';
+    return;
+  }
+  const activeSlide = slides[current];
+  const textToRead = activeSlide.innerText.replace(/[^\w\s.,?!-]/g, ''); 
+  if (textToRead.trim().length === 0) return;
+
+  const utterance = new SpeechSynthesisUtterance(textToRead);
+  utterance.lang = 'en-US'; 
+  utterance.rate = 0.9; 
+  
+  utterance.onstart = () => { btn.textContent = '⏹️ Stop'; };
+  utterance.onend = () => { btn.textContent = '🔊 Read'; };
+  utterance.onerror = () => { btn.textContent = '🔊 Read'; };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+/* ===================== FLOATING TIMER LOGIC ===================== */
+let timeLeft = 300;
+let timerInterval = null;
+let isRunning = false;
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  document.getElementById('timerDisplay').textContent = 
+    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('timerBtn');
+  if (isRunning) {
+    clearInterval(timerInterval);
+    btn.textContent = '▶️';
+    isRunning = false;
+  } else {
+    if (timeLeft <= 0) timeLeft = 300;
+    btn.textContent = '⏸️';
+    isRunning = true;
+    timerInterval = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateTimerDisplay();
+      } else {
+        clearInterval(timerInterval);
+        btn.textContent = '▶️';
+        isRunning = false;
+        alert("Time's up! ⏰");
+      }
+    }, 1000);
+  }
+}
+function resetTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 300;
+  isRunning = false;
+  document.getElementById('timerBtn').textContent = '▶️';
+  updateTimerDisplay();
+}
+
+/* ===================== TOGGLE SHOW ANSWER ===================== */
+function toggleAnswer(btn) {
+  const card = btn.closest('.split-text') || btn.closest('.card');
+  const answerBox = card.querySelector('.hidden-answer');
+  if (answerBox.classList.contains('show')) {
+    answerBox.classList.remove('show');
+    btn.textContent = 'Show Possible Answers';
+  } else {
+    answerBox.classList.add('show');
+    btn.textContent = 'Hide Possible Answers';
+  }
+}
+
+/* ===================== MCQ & SCORING LOGIC ===================== */
+let score = 0;
+const totalQuestions = 15;
+
+function checkMCQ(btn, isCorrect) {
+  const grid = btn.closest('.mcq-grid');
+  const options = grid.querySelectorAll('.mcq-option');
+  options.forEach(opt => opt.disabled = true);
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    if (btn.closest('.slide').querySelector('.ilaw-bar.green')) {
+      score++;
+    }
+  } else {
+    btn.classList.add('wrong');
+    options.forEach(opt => {
+      if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+  
+  const scoreEl = document.getElementById('final-score');
+  if(scoreEl) scoreEl.textContent = score + '/' + totalQuestions;
+}
+
+/* ===================== WAYS FORWARD MESSAGE ===================== */
+function generateWaysForward() {
+  const msgBox = document.getElementById('ways-forward-msg');
+  if(!msgBox) return;
+  msgBox.style.display = 'block';
+  
+  let title = "";
+  let message = "";
+  let color = "";
+  const passingScore = 12;
+
+  if (score >= passingScore) {
+    title = "🎉 Congratulations!";
+    message = "You are now ready for the next lesson! You have shown a strong understanding of drawing conclusions, possessive nouns, and compound nouns.";
+    color = "#38a169"; 
+  } else {
+    title = "📖 Let's Study Again";
+    message = "Don't worry! Let's go back to Day 1–4 and review the teaching points together. Focus on how to find clues in the story and the apostrophe rules.";
+    color = "#e53e3e"; 
+  }
+
+  msgBox.innerHTML = `
+    <h2 style="color: ${color}; text-align: center; margin-bottom: 2vh; font-size: clamp(2rem, 4vw, 3rem);">${title}</h2>
+    <p style="font-size: clamp(1.4rem, 2.5vw, 2.2rem); text-align: center; font-weight: 600; line-height: 1.4;">${message}</p>
+  `;
+}
+
+/* ===================== IMAGE UPLOAD ===================== */
+function loadImage(event, container) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      let img = container.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        container.appendChild(img);
+      }
+      img.src = e.target.result;
+      const span = container.querySelector('span');
+      if (span) span.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+function dropImage(event, container) {
+  event.preventDefault();
+  const file = event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      let img = container.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        container.appendChild(img);
+      }
+      img.src = e.target.result;
+      const span = container.querySelector('span');
+      if (span) span.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+</script>
+</body>
+</html>
